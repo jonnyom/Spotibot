@@ -1,0 +1,151 @@
+#!/usr/bin/env ruby
+
+require_relative "../config/boot"
+require "rubocop"
+require "json"
+
+def with_captured_stdout
+  old_stdout = $stdout
+  $stdout = StringIO.new
+  yield
+  $stdout.string
+ensure
+  $stdout = old_stdout
+end
+
+class SaneFile
+
+  def initialize(path)
+    @path = path
+  end
+
+  def insert_before_line(number:, content:, indent: false)
+    indentation = indent ? indentation_of_line(number: number) : 0
+
+    insert(index: number - 1, content: content, indentation: indentation)
+  end
+
+  def update_line(number:, content:)
+    lines[number - 1] = content
+  end
+
+  def delete_line(number:)
+    lines.delete_at(number - 1)
+  end
+
+  def save
+    File.write(@path, lines.join("\n") + "\n")
+  end
+
+  def line(number:)
+    lines[number - 1] || ""
+  end
+
+  private def indentation_of_line(number:)
+    line(number: number)[/\A */].size
+  end
+
+  private def insert(index:, content:, indentation:)
+    lines.insert(index, (" " * indentation) + content)
+  end
+
+  private def lines
+    @lines ||= file.split("\n")
+  end
+
+  private def file
+    @file ||= File.read(@path)
+  end
+
+end
+
+def auto_inline_disable(args)
+  args = args - ["--auto-inline-disable"]
+  args << "--format=j"
+
+  json = with_captured_stdout do
+    cli = RuboCop::CLI.new
+    cli.run(args)
+  end
+
+  results = JSON.parse(json)
+  files = results["files"].select do |file|
+    file["offenses"].any?
+  end
+
+  changes = files.each_with_object({}) do |file, hash|
+    path = file["path"]
+
+    hash[path] = file["offenses"].flat_map do |offense|
+      cop_name = offense["cop_name"]
+      starting_line_number = offense["location"]["line"]
+
+      if starting_line_number == 1
+        {
+          line_number: starting_line_number,
+          position: :top_of_file,
+          cop_name: cop_name,
+        }
+      else
+        {
+          line_number: starting_line_number,
+          position: :end_of_line,
+          cop_name: cop_name,
+        }
+      end
+    end
+  end
+
+  changes.each_pair do |path, line_changes|
+    file = SaneFile.new(path)
+
+    line_changes.sort_by do |line_change|
+      line_change[:line_number]
+    end.reverse.each do |line_change|
+      line_number = line_change[:line_number]
+      position = line_change[:position]
+
+      line = file.line(number: line_number)
+
+      cops = if line.include?("# rubocop:disable")
+        line[/# rubocop:disable (.*)/, 1].split(", ")
+      else
+        []
+      end
+
+      if line_change[:cop_name] == "Style/FrozenStringLiteralComment"
+        content = "# frozen_string_literal: false\n"
+        file.insert_before_line(number: line_number, content: content)
+      else
+        cops << line_change[:cop_name]
+
+        comment = "# rubocop:disable #{cops.uniq.join(', ')}"
+
+        if position == :end_of_line
+          line_content = file.line(number: line_number)
+
+          if line_content.include?("# rubocop:disable")
+            line_content = line_content.sub(/ # rubocop:disable.+/, "")
+          end
+
+          file.update_line(number: line_number, content: "#{line_content} #{comment}")
+        elsif position == :top_of_file
+          file.insert_before_line(number: line_number, content: "#{comment}\n")
+        end
+      end
+    end
+
+    file.save
+  end
+end
+
+paths = if ARGV.length > 0 && File.exist?(ARGV.first) # we have a list of paths passed
+  ARGV.select { |filepath| File.exist?(filepath) }
+else
+  `grep -lr app config engines gems -e 'RESPONSIBLE_TEAM'`.split("\n") +
+    `find app/commands app/lib lib -type f`.split("\n")
+end
+
+exit_status = RuboCop::CLI.new.run((ARGV + paths).uniq)
+
+exit(exit_status)
