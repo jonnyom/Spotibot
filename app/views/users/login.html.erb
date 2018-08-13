@@ -1,0 +1,19 @@
+<div class="site-wrapper">
+  <div class="site-wrapper-inner">
+    <div class="cover-container">
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">Welcome to Spotibot</h1>
+        <p class="lead">
+          Finding new music is tough.
+          <br>Let us do it for you.
+        </p>
+        <p class="lead">Get started by adding Spotibot to your Slack</p>
+        <% if flash[:notice] %>
+          <div class="alert alert-info"><%= flash[:notice] %></div>
+        <% end %>
+        <%= render partial: 'add_to_slack' %>
+        <%= link_to 'Sign in with Spotify', '/auth/spotify', class: 'btn btn-lg btn-secondary' %>
+      </main>
+    </div>
+  </div>
+</div>
