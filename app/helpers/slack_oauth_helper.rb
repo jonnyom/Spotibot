@@ -1,0 +1,2 @@
+module SlackOauthHelper
+end
