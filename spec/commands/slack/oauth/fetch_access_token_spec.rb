@@ -15,7 +15,7 @@ describe Slack::Oauth::FetchAccessToken do
 
   it "fetches the correct access token" do
     expect(client).to receive(:oauth_access).with({ client_id: Rails.application.secrets.slack_client_id,
-                                                    client_secret: Rails.application.secrets.slack_client_secret,
+                                                    client_secret: Rails.application.secrets.slack_secret,
                                                     redirect_uri: ::SLACK_OAUTH_REDIRECT_URL,
                                                     code: code })
                               .and_return(successful_response)

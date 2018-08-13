@@ -8,17 +8,18 @@ default: &default
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   timeout: 5000
   adapter: postgresql
-  host: jonnyomahony
   username: postgres
 
 test:
   <<: *default
   database: travis_ci_test
+  host: localhost
   database: db/spotibot_development
 
 development:
   <<: *default
   encoding: unicode
+  host: jonnyomahony
   database: db/spotibot_test
 
 # Warning: The database defined as "test" will be erased and

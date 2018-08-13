@@ -6,8 +6,8 @@ describe Slack::SlackOauthController, type: :controller do
 
   describe "#callback" do
     it "returns no content" do
-      subject { post :callback }
-      expect(subject.status).to eq(204)
+      get :callback
+      expect(response.status).to eq(204)
     end
   end
 
