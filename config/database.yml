@@ -12,15 +12,14 @@ default: &default
 
 test:
   <<: *default
-  database: travis_ci_test
+  database: db/spotibot_test
   host: localhost
-  database: db/spotibot_development
 
 development:
   <<: *default
   encoding: unicode
   host: jonnyomahony
-  database: db/spotibot_test
+  database: db/spotibot_dev
 
 # Warning: The database defined as "test" will be erased and
 # re-generated from your development database when you run "rake".

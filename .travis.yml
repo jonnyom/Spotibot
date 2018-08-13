@@ -5,7 +5,7 @@ before_install:
   - gem update --system
   - gem --version
 before_script:
-  - psql -c 'create database travis_ci_test;' -U postgres
+  - psql -c 'create database db/spotibot_test;' -U postgres
 rvm:
   - 2.5.1
 services:
