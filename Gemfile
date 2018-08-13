@@ -46,9 +46,11 @@ gem 'rack-timeout'
 gem 'rspotify'
 gem 'rubocop'
 gem 'rspec'
+gem 'rspec-rails'
 gem 'sidekiq'
 gem 'slack'
 gem 'slack-ruby-client'
+gem 'webmock'
 gem 'whenever'
 
 group :development, :test do
@@ -56,6 +58,7 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # Adds support for Capybara system testing and selenium driver
   gem 'capybara', '~> 2.13'
+  gem 'factory_bot_rails'
   gem 'selenium-webdriver'
 end
 
