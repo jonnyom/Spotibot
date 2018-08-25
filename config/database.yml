@@ -12,7 +12,7 @@ default: &default
 
 test:
   <<: *default
-  database: spotibot_test
+  database: travis_ci_test
   host: localhost
 
 development:
