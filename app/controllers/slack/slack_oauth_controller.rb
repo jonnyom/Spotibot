@@ -4,7 +4,12 @@ module Slack
   class SlackOauthController < ApplicationController
 
     def callback
-      head 204
+      Slack::Oauth::HandleCallback.run!(code: code)
+      head :no_content
+    end
+
+    private def code
+      params.require(:code)
     end
 
   end

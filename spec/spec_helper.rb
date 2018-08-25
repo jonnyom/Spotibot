@@ -2,24 +2,36 @@ ENV["RAILS_ENV"] ||= "test"
 
 require File.expand_path("../../config/environment", __FILE__)
 require "rspec/rails"
-require "factory_bot"
+require 'database_cleaner'
 require "webmock/rspec"
+require "factory_bot"
 require "json"
-
-# Requires supporting ruby files with custom matchers and macros, etc,
-# in spec/support/ and its subdirectories.
-#
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
-
-# Requires spec helpers
-#
-Dir[Rails.root.join("spec/spec_helpers/**/*.rb")].each { |f| require f }
-
-Dir[Rails.root.join("spec/support/**/*.rb")].each { |f| require f }
 
 RSpec.configure do |config|
   config.include FactoryBot::Syntax::Methods
   config.include ActiveSupport::Testing::TimeHelpers
+  config.use_transactional_fixtures = false
+  config.before(:suite) do
+    DatabaseCleaner.clean_with(:truncation)
+  end
+  config.before(:each) do
+    DatabaseCleaner.strategy = :transaction
+  end
+  config.before(:each, :js => true) do
+    DatabaseCleaner.strategy = :truncation
+  end
+  config.before(:each) do
+    DatabaseCleaner.start
+  end
+  config.after(:each) do
+    DatabaseCleaner.clean
+  end
+  config.before(:all) do
+    DatabaseCleaner.start
+  end
+  config.after(:all) do
+    DatabaseCleaner.clean
+  end
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
