@@ -127,3 +127,9 @@ Lint/Debugger:
 # Style preference
 Style/MethodDefParentheses:
   Enabled: false
+
+Style/AccessModifierDeclarations:
+  Enabled: false
+
+Layout/AlignHash:
+  Enabled: false
