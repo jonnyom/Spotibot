@@ -1,0 +1,4 @@
+example_id                                                 | status | run_time        |
+---------------------------------------------------------- | ------ | --------------- |
+./spec/controllers/spotify_oauth_controller_spec.rb[1:1:1] | passed | 0.07181 seconds |
+./spec/controllers/users_controller_spec.rb[1:1:1]         | passed | 0.09055 seconds |
