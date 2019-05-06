@@ -5,6 +5,10 @@ Rails:
 Metrics/LineLength:
   Max: 120
 
+Metrics/BlockLength:
+  exclude:
+    - spec/**/*
+
 # Too short methods lead to extraction of single-use methods, which can make
 # the code easier to read (by naming things), but can also clutter the class
 Metrics/MethodLength:
@@ -27,8 +31,7 @@ Style/SymbolArray:
 
 # Most readable form.
 Layout/AlignHash:
-  EnforcedHashRocketStyle: table
-  EnforcedColonStyle: table
+  Enabled: false
 
 # Mixing the styles looks just silly.
 Style/HashSyntax:
@@ -131,5 +134,8 @@ Style/MethodDefParentheses:
 Style/AccessModifierDeclarations:
   Enabled: false
 
-Layout/AlignHash:
+Rails/Delegate:
+  Enabled: false
+
+Layout/SpaceInsideBlockBraces:
   Enabled: false

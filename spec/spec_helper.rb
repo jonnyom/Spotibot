@@ -2,6 +2,7 @@ require File.expand_path("../../config/environment", __FILE__)
 require "rspec/rails"
 require "factory_bot"
 require "json"
+require "rails_helper"
 
 OmniAuth.config.test_mode = true
 spotify_auth_hash = {
@@ -50,7 +51,10 @@ spotify_auth_hash = {
 }
 OmniAuth.config.mock_auth[:spotify] = OmniAuth::AuthHash.new(spotify_auth_hash)
 
+Dir[Rails.root.join("spec/spec_helpers/**/*.rb")].each { |f| require f }
+
 RSpec.configure do |config|
+  config.include FactoryBot::Syntax::Methods
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
   end
