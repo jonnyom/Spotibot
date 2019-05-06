@@ -62,7 +62,8 @@ describe SpotifyOauthController, type: :controller do
                                              spotify_hash: spotify_user.to_hash
       )
       get :callback
-      expect(response).to be_successful
+      expect(session[:spotify_user_id]).to be_present
+      expect(response).to redirect_to("/")
     end
 
   end
