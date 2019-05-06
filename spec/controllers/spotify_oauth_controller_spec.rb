@@ -55,9 +55,11 @@ describe SpotifyOauthController, type: :controller do
 
   describe ".callback" do
     it "responds successfully" do
-      expect(User).to receive(:create!).with(spotify_id: spotify_auth_hash[:uid],
-                                             email: spotify_auth_hash[:info][:email],
-                                             full_name: spotify_auth_hash[:info][:display_name]
+      spotify_user = RSpotify::User.new(request.env["omniauth.auth"])
+      expect(User).to receive(:create!).with(spotify_id: spotify_user.id,
+                                             email: spotify_user.email,
+                                             full_name: spotify_user.display_name,
+                                             spotify_hash: spotify_user.to_hash
       )
       get :callback
       expect(response).to be_successful
