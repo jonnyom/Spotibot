@@ -3,12 +3,12 @@
 class SpotifyOauthController < ApplicationController
 
   def callback
-    # create user here
     User.create!(spotify_id: spotify_user.id,
                  full_name: spotify_user.display_name,
                  email: spotify_user.email,
                  spotify_hash: spotify_user.to_hash)
-    render body: nil, status: :ok
+    session[:spotify_user_id] = spotify_user.id
+    redirect_to "/", status: 302
   end
 
   private def spotify_user
