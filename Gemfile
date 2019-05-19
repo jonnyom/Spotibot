@@ -15,6 +15,7 @@ gem "pry"
 gem "pry-rails"
 gem "puma", "~> 3.11"
 gem "rspotify"
+gem "whenever"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", ">= 1.1.0", require: false
