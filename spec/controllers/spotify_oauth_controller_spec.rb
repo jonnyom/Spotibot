@@ -52,6 +52,8 @@ describe SpotifyOauthController, type: :controller do
       }
     }
   end
+  let(:intercom_client) { double("Intercom::Client", users: intercom_users) }
+  let(:intercom_users) { double("Intercom::Client::User") }
 
   describe ".callback" do
     it "responds successfully" do
@@ -61,6 +63,9 @@ describe SpotifyOauthController, type: :controller do
                                              full_name: spotify_user.display_name,
                                              spotify_hash: spotify_user.to_hash
       )
+      expect(Intercom::Client).to receive(:new).and_return(intercom_client)
+      expect(intercom_client).to receive(:users).and_return(intercom_users)
+      expect(intercom_users).to receive(:create).with(hash_including(user_id: spotify_user.id, email: spotify_user.email))
       get :callback
       expect(session[:spotify_user_id]).to be_present
       expect(response).to redirect_to("/")
