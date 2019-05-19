@@ -11,7 +11,7 @@ describe Spotify::Recommender do
   let(:artist2) { double(RSpotify::Artist, id: "456", name: "Actually Just Racists") }
   let(:recommendations) { double(RSpotify::Recommendations, tracks: [track1, track2]) }
   let(:top_artists) { [artist1, artist2] }
-  let!(:recommender) { described_class.new(user: user) }
+  let(:recommender) { described_class.new(user: user) }
 
   before do
     allow(RSpotify::User).to receive(:new).and_return(spotify_user)
